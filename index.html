@@ -25,8 +25,6 @@ tailwind.config = {
   .cal-cell { aspect-ratio: 1 / 1; }
   @media (min-width: 640px) { .cal-cell { aspect-ratio: 4 / 3; } }
   html { scroll-behavior: smooth; }
-  .fade-in { animation: fadeIn 0.6s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body class="bg-cream text-bronze-900">
@@ -69,8 +67,7 @@ tailwind.config = {
 
 <!-- ===== HERO IMAGE SLIDER ===== -->
 <section class="relative overflow-hidden bg-bronze-900" style="height: 60vh; min-height: 360px;">
-  <div id="heroSlider" class="flex transition-transform duration-700 ease-in-out h-full">
-  </div>
+  <div id="heroSlider" class="flex transition-transform duration-700 ease-in-out h-full"></div>
   <button id="heroPrev" class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/30 hover:bg-black/50 text-white text-2xl backdrop-blur-sm z-10" aria-label="ก่อนหน้า">‹</button>
   <button id="heroNext" class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/30 hover:bg-black/50 text-white text-2xl backdrop-blur-sm z-10" aria-label="ถัดไป">›</button>
   <div id="heroDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"></div>
@@ -127,7 +124,6 @@ tailwind.config = {
       <div class="flex items-center gap-3 text-bronze-800"><span class="text-lg">🚗</span><span class="text-sm">จอดรถได้ 7 คัน</span></div>
       <div class="flex items-center gap-3 text-bronze-800"><span class="text-lg">🛟</span><span class="text-sm">ห่วงยาง</span></div>
     </div>
-    <!-- FREE items -->
     <div class="max-w-2xl mx-auto mt-8 bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center">
       <p class="text-emerald-800 font-medium mb-1">FREE! รวมในราคาห้องพัก</p>
       <p class="text-sm text-emerald-700 font-light">น้ำแข็ง · น้ำเปล่า 12 ขวด · ถ่าน 1 ถุง</p>
@@ -138,7 +134,8 @@ tailwind.config = {
 <!-- ===== GALLERY ===== -->
 <section class="py-16">
   <div class="max-w-5xl mx-auto px-4">
-    <h2 class="serif text-3xl sm:text-4xl font-semibold text-center text-bronze-700 mb-8">ภาพบรรยากาศที่พัก</h2>
+    <h2 class="serif text-3xl sm:text-4xl font-semibold text-center text-bronze-700 mb-2">ภาพบรรยากาศที่พัก</h2>
+    <p id="gallery-status" class="text-center text-bronze-400 text-xs mb-6 font-light"></p>
     <div id="gallery" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3"></div>
     <p class="text-center text-xs text-bronze-400 mt-4 font-light">แตะที่ภาพเพื่อดูขนาดเต็ม</p>
   </div>
@@ -149,7 +146,6 @@ tailwind.config = {
   <div class="max-w-3xl mx-auto px-4">
     <h2 class="serif text-3xl sm:text-4xl font-semibold text-center text-bronze-700 mb-1">ตารางห้องว่าง</h2>
     <p class="text-center text-bronze-500 text-sm mb-6 font-light" id="data-status">กำลังโหลดข้อมูลล่าสุด…</p>
-
     <div class="bg-cream rounded-3xl shadow-lg shadow-bronze-200/60 border border-bronze-100 p-4 sm:p-6">
       <div class="flex items-center justify-between mb-4">
         <button id="prevBtn" class="w-10 h-10 rounded-full bg-bronze-100 hover:bg-bronze-200 text-bronze-700 font-bold" aria-label="เดือนก่อนหน้า">‹</button>
@@ -166,7 +162,6 @@ tailwind.config = {
         <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-stone-100 border border-stone-300 inline-block"></span> ผ่านมาแล้ว</span>
       </div>
     </div>
-
     <div class="text-center mt-6">
       <p class="text-bronze-700 mb-3 font-light">เจอวันที่ถูกใจแล้ว? ทักจองได้เลย</p>
       <div class="flex flex-wrap justify-center gap-3">
@@ -199,7 +194,6 @@ tailwind.config = {
       <div class="text-bronze-500 text-sm">บาท / คืน</div>
     </div>
   </div>
-  <!-- Extra charges -->
   <div class="max-w-2xl mx-auto mt-8 bg-white rounded-2xl border border-bronze-100 p-6 shadow-sm">
     <h3 class="font-medium text-bronze-800 mb-3 text-center">ค่าบริการเพิ่มเติม</h3>
     <div class="grid sm:grid-cols-2 gap-3 text-sm text-bronze-700">
@@ -294,7 +288,7 @@ tailwind.config = {
   </div>
 </section>
 
-<footer class="bg-bronze-900 text-bronze-100 text-center py-10 text-sm">
+<footer class="bg-bronze-900 text-bronze-100 text-center py-10 text-sm pb-24 sm:pb-10">
   <p class="serif text-2xl mb-1 text-bronze-200">Villa de Mont</p>
   <p class="tracking-[0.4em] text-bronze-400 text-[10px] mb-3">· K A E N G K H O I ·</p>
   <p class="font-light">โทร 081-994-5050 (10:00–19:00) · Facebook · TikTok: @villademont_saraburi</p>
@@ -318,14 +312,47 @@ tailwind.config = {
 </div>
 
 <script>
-// ================= CONFIG =================
+// =================================================================
+//  CONFIG — แก้ไขตรงนี้
+// =================================================================
 const SHEET_ID = '1AiTtVBRZWGobulKvc8bC0MOmiz901_FoBMsCXLFXr8Q';
 const SHEET_NAME = 'C_Calendar';
+
+// ★ วาง URL ของ Google Apps Script ที่นี่ (ดูวิธีตั้งค่าใน SETUP-AUTO-GALLERY.md)
+// ถ้าเว้นว่าง จะใช้รูป fallback ด้านล่างแทน
+const GALLERY_SCRIPT_URL = '';
+
+// Fallback image IDs — ใช้เมื่อไม่ได้ตั้งค่า Script URL
+const FALLBACK_IDS = [
+  '177poCA9vRpCQDKHsAvZRBWJEb6nFcAao',
+  '1Dj1I3kNWeEJ0NA5VrisO78fNmvepWs0x',
+  '1whW3cY5Da1uSEo7lvI-huF6OFur_y47q',
+  '1Irb4SMl5kXJezpdidt78HvJXn0MFwoJ_',
+  '12wd4aSXMMMl8AEXnlFhLyierUHHZXw1l',
+  '1WykDf633uN44qrxpYKZ-Rc5FDcE5WCAn',
+  '1ALVtCPvPRo2Ycm-XC7q0uzRbFFoCefS1',
+  '1hktnv4eZtN0SwSLvr6YyrRzMFCdpZhXm',
+  '1M8IM6bS1MJeHGmLRmwz3SaZ4LxBxiZJn',
+  '1jny-_u6NfcBdAIf4pmYewA1JEeQSEXh3',
+  '1JtKJh8buOOeVMyNnxQKX2qU7dur_ZKY7',
+  '1Ek3O19NqVKlcWz9Iqc7aDDZrvD0ZWOgB',
+  '11srAn9S1hLF63T99cB4oV8s2Tlj337j2',
+  '1l-sgBWS8KN37qd4muxV4z3wMOtOGHDNV',
+  '1leCmPWrEC7V-4_1vP8kTxQxfPDUvaJ-V',
+  '1-fkT2a2TnZVXv8TgTiT8qE_jRarX5VDy',
+  '1scZwXAa5o2K9dGLfPmwrAyKiC1tPjqKH',
+  '1drJu6pGpYm7ow4BdMxtLqQeH6NLZ9sWV',
+  '1J2pBUUtf7QqEXYBnh4W45J3zg5qikp6I',
+  '1Yzv0gh7eJWF1UtQfqtOtvf35d9nqu1NB',
+];
+
 const MONTHS_TH = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 
-const FALLBACK = ["31/5/2569|1/6/2569","1/6/2569|2/6/2569","2/6/2569|3/6/2569","4/6/2569|5/6/2569","5/6/2569|6/6/2569","6/6/2569|7/6/2569","7/6/2569|8/6/2569","8/6/2569|9/6/2569","9/6/2569|10/6/2569","10/6/2569|11/6/2569","11/6/2569|12/6/2569","12/6/2569|13/6/2569","13/6/2569|14/6/2569","14/6/2569|15/6/2569","15/6/2569|16/6/2569","16/6/2569|18/6/2569","18/6/2569|19/6/2569","19/6/2569|20/6/2569","20/6/2569|21/6/2569","21/6/2569|22/6/2569","22/6/2569|23/6/2569","23/6/2569|24/6/2569","24/6/2569|25/6/2569","25/6/2569|26/6/2569","26/6/2569|27/6/2569","27/6/2569|28/6/2569","28/6/2569|30/6/2569","3/7/2569|4/7/2569","4/7/2569|5/7/2569","5/7/2569|6/7/2569","6/7/2569|8/7/2569","10/7/2569|11/7/2569","11/7/2569|12/7/2569","12/7/2569|13/7/2569","14/7/2569|15/7/2569","16/7/2569|17/7/2569","17/7/2569|19/7/2569","19/7/2569|20/7/2569","20/7/2569|22/7/2569","23/7/2569|24/7/2569","25/7/2569|26/7/2569","26/7/2569|27/7/2569","27/7/2569|28/7/2569","28/7/2569|29/7/2569","29/7/2569|30/7/2569","31/7/2569|1/8/2569","1/8/2569|2/8/2569","8/8/2569|9/8/2569","11/8/2569|12/8/2569","13/8/2569|15/8/2569","15/8/2569|16/8/2569","22/8/2569|23/8/2569","29/8/2569|30/8/2569","30/8/2569|31/8/2569","5/9/2569|6/9/2569","13/9/2569|14/9/2569","26/9/2569|27/9/2569","3/10/2569|4/10/2569","4/10/2569|5/10/2569","11/10/2569|13/10/2569","13/10/2569|14/10/2569","17/10/2569|18/10/2569","23/10/2569|24/10/2569"];
+const FALLBACK_BOOKINGS = ["31/5/2569|1/6/2569","1/6/2569|2/6/2569","2/6/2569|3/6/2569","4/6/2569|5/6/2569","5/6/2569|6/6/2569","6/6/2569|7/6/2569","7/6/2569|8/6/2569","8/6/2569|9/6/2569","9/6/2569|10/6/2569","10/6/2569|11/6/2569","11/6/2569|12/6/2569","12/6/2569|13/6/2569","13/6/2569|14/6/2569","14/6/2569|15/6/2569","15/6/2569|16/6/2569","16/6/2569|18/6/2569","18/6/2569|19/6/2569","19/6/2569|20/6/2569","20/6/2569|21/6/2569","21/6/2569|22/6/2569","22/6/2569|23/6/2569","23/6/2569|24/6/2569","24/6/2569|25/6/2569","25/6/2569|26/6/2569","26/6/2569|27/6/2569","27/6/2569|28/6/2569","28/6/2569|30/6/2569","3/7/2569|4/7/2569","4/7/2569|5/7/2569","5/7/2569|6/7/2569","6/7/2569|8/7/2569","10/7/2569|11/7/2569","11/7/2569|12/7/2569","12/7/2569|13/7/2569","14/7/2569|15/7/2569","16/7/2569|17/7/2569","17/7/2569|19/7/2569","19/7/2569|20/7/2569","20/7/2569|22/7/2569","23/7/2569|24/7/2569","25/7/2569|26/7/2569","26/7/2569|27/7/2569","27/7/2569|28/7/2569","28/7/2569|29/7/2569","29/7/2569|30/7/2569","31/7/2569|1/8/2569","1/8/2569|2/8/2569","8/8/2569|9/8/2569","11/8/2569|12/8/2569","13/8/2569|15/8/2569","15/8/2569|16/8/2569","22/8/2569|23/8/2569","29/8/2569|30/8/2569","30/8/2569|31/8/2569","5/9/2569|6/9/2569","13/9/2569|14/9/2569","26/9/2569|27/9/2569","3/10/2569|4/10/2569","4/10/2569|5/10/2569","11/10/2569|13/10/2569","13/10/2569|14/10/2569","17/10/2569|18/10/2569","23/10/2569|24/10/2569"];
 
-// ================= DATE PARSING =================
+// =================================================================
+//  DATE UTILITIES
+// =================================================================
 function parseCell(v) {
   if (v == null) return null;
   if (typeof v === 'string') {
@@ -342,7 +369,6 @@ function addDays(isoStr, n) {
   const dt = new Date(Date.UTC(y, m-1, d + n));
   return iso(dt.getUTCFullYear(), dt.getUTCMonth()+1, dt.getUTCDate());
 }
-
 function buildBookedSet(ranges) {
   const set = new Set();
   for (const {ci, co} of ranges) {
@@ -355,7 +381,9 @@ function buildBookedSet(ranges) {
   return set;
 }
 
-// ================= DATA LOADING =================
+// =================================================================
+//  BOOKING DATA
+// =================================================================
 async function loadBookings() {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`;
   const res = await fetch(url);
@@ -363,32 +391,36 @@ async function loadBookings() {
   const text = await res.text();
   const json = JSON.parse(text.substring(text.indexOf('(') + 1, text.lastIndexOf(')')));
   const cols = json.table.cols.map(c => (c.label || '').trim());
-  let ciIdx = cols.findIndex(l => /^check\s*in$/i.test(l));
-  let coIdx = cols.findIndex(l => /^check\s*out$/i.test(l));
-  let stIdx = cols.findIndex(l => l.includes('สถานะ'));
-  if (ciIdx < 0) ciIdx = 3;
-  if (coIdx < 0) coIdx = 4;
-  if (stIdx < 0) stIdx = 23;
+  let tagIdx = cols.findIndex(l => /^tag$/i.test(l));
+  let colorIdx = cols.findIndex(l => /สี|color/i.test(l));
+  let ciIdx = cols.findIndex(l => /check\s*in/i.test(l));
+  let coIdx = cols.findIndex(l => /check\s*out/i.test(l));
+  if (tagIdx < 0) tagIdx = 0;
+  if (colorIdx < 0) colorIdx = 1;
+  if (ciIdx < 0) ciIdx = 2;
+  if (coIdx < 0) coIdx = 3;
   const ranges = [];
   for (const row of json.table.rows) {
     const c = row.c || [];
-    const status = c[stIdx] && c[stIdx].v != null ? String(c[stIdx].v) : '';
-    if (status.includes('ยกเลิก')) continue;
-    if (status && !status.includes('ดำเนินการ')) continue;
+    const tag = c[tagIdx] && c[tagIdx].v != null ? String(c[tagIdx].v) : '';
+    if (!tag) continue;
+    const color = c[colorIdx] && c[colorIdx].v != null ? String(c[colorIdx].v).toLowerCase() : '';
+    if (color === 'red') continue;
     const ci = parseCell(c[ciIdx] && c[ciIdx].v);
     const co = parseCell(c[coIdx] && c[coIdx].v);
-    if (!ci || !status) continue;
+    if (!ci) continue;
     ranges.push({ci, co});
   }
   if (!ranges.length) throw new Error('no rows');
   return ranges;
 }
-
 function fallbackRanges() {
-  return FALLBACK.map(s => { const [a,b] = s.split('|'); return {ci: parseCell(a), co: parseCell(b)}; });
+  return FALLBACK_BOOKINGS.map(s => { const [a,b] = s.split('|'); return {ci: parseCell(a), co: parseCell(b)}; });
 }
 
-// ================= CALENDAR RENDER =================
+// =================================================================
+//  CALENDAR
+// =================================================================
 let booked = new Set();
 const today = new Date();
 const todayIso = iso(today.getFullYear(), today.getMonth()+1, today.getDate());
@@ -426,66 +458,79 @@ function render() {
 document.getElementById('prevBtn').onclick = () => { viewM--; if (viewM < 0) { viewM = 11; viewY--; } render(); };
 document.getElementById('nextBtn').onclick = () => { viewM++; if (viewM > 11) { viewM = 0; viewY++; } render(); };
 
-// ================= GALLERY (Google Drive) =================
-const DRIVE_IDS = [
-  '177poCA9vRpCQDKHsAvZRBWJEb6nFcAao',
-  '1Dj1I3kNWeEJ0NA5VrisO78fNmvepWs0x',
-  '1whW3cY5Da1uSEo7lvI-huF6OFur_y47q',
-  '1Irb4SMl5kXJezpdidt78HvJXn0MFwoJ_',
-  '12wd4aSXMMMl8AEXnlFhLyierUHHZXw1l',
-  '1WykDf633uN44qrxpYKZ-Rc5FDcE5WCAn',
-  '1ALVtCPvPRo2Ycm-XC7q0uzRbFFoCefS1',
-  '1hktnv4eZtN0SwSLvr6YyrRzMFCdpZhXm',
-  '1M8IM6bS1MJeHGmLRmwz3SaZ4LxBxiZJn',
-  '1jny-_u6NfcBdAIf4pmYewA1JEeQSEXh3',
-  '1JtKJh8buOOeVMyNnxQKX2qU7dur_ZKY7',
-  '1Ek3O19NqVKlcWz9Iqc7aDDZrvD0ZWOgB',
-  '11srAn9S1hLF63T99cB4oV8s2Tlj337j2',
-  '1l-sgBWS8KN37qd4muxV4z3wMOtOGHDNV',
-  '1leCmPWrEC7V-4_1vP8kTxQxfPDUvaJ-V',
-  '1-fkT2a2TnZVXv8TgTiT8qE_jRarX5VDy',
-  '1scZwXAa5o2K9dGLfPmwrAyKiC1tPjqKH',
-  '1drJu6pGpYm7ow4BdMxtLqQeH6NLZ9sWV',
-  '1J2pBUUtf7QqEXYBnh4W45J3zg5qikp6I',
-  '1Yzv0gh7eJWF1UtQfqtOtvf35d9nqu1NB',
-];
-const PHOTOS = DRIVE_IDS.map(id => `https://lh3.googleusercontent.com/d/${id}=s800`);
-const PHOTOS_FULL = DRIVE_IDS.map(id => `https://lh3.googleusercontent.com/d/${id}=s1600`);
+// =================================================================
+//  GALLERY — Auto-fetch from Google Drive via Apps Script
+// =================================================================
+let PHOTOS = [];      // thumbnail URLs
+let PHOTOS_FULL = []; // full-size URLs
 
-// Hero Slider (first 5 images)
-const heroSlider = document.getElementById('heroSlider');
-const heroDots = document.getElementById('heroDots');
-const heroCount = Math.min(5, PHOTOS.length);
-let heroIdx = 0;
-for (let i = 0; i < heroCount; i++) {
-  const slide = document.createElement('div');
-  slide.className = 'flex-shrink-0 w-full h-full';
-  slide.innerHTML = `<img src="${PHOTOS_FULL[i]}" alt="Villa de Mont" class="w-full h-full object-cover">`;
-  heroSlider.appendChild(slide);
-  const dot = document.createElement('button');
-  dot.className = 'w-2.5 h-2.5 rounded-full transition ' + (i === 0 ? 'bg-white' : 'bg-white/40');
-  dot.onclick = () => goHero(i);
-  heroDots.appendChild(dot);
+function idsToUrls(ids) {
+  PHOTOS = ids.map(id => `https://lh3.googleusercontent.com/d/${id}=s800`);
+  PHOTOS_FULL = ids.map(id => `https://lh3.googleusercontent.com/d/${id}=s1600`);
 }
-function goHero(i) {
-  heroIdx = i;
-  heroSlider.style.transform = `translateX(-${i * 100}%)`;
-  heroDots.querySelectorAll('button').forEach((d, j) => d.className = 'w-2.5 h-2.5 rounded-full transition ' + (j === i ? 'bg-white' : 'bg-white/40'));
-}
-document.getElementById('heroPrev').onclick = () => goHero((heroIdx - 1 + heroCount) % heroCount);
-document.getElementById('heroNext').onclick = () => goHero((heroIdx + 1) % heroCount);
-setInterval(() => goHero((heroIdx + 1) % heroCount), 5000);
 
-// Gallery grid
-const gal = document.getElementById('gallery');
-PHOTOS.forEach((src, i) => {
-  const btn = document.createElement('button');
-  btn.className = 'group rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/3] bg-bronze-100 border border-bronze-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-bronze-400';
-  btn.innerHTML = `<img src="${src}" alt="Villa de Mont รูปที่ ${i+1}" loading="lazy"
-    class="w-full h-full object-cover group-hover:scale-105 transition duration-300">`;
-  btn.onclick = () => openLb(i);
-  gal.appendChild(btn);
-});
+async function loadGallery() {
+  const statusEl = document.getElementById('gallery-status');
+  let ids = FALLBACK_IDS;
+
+  if (GALLERY_SCRIPT_URL) {
+    try {
+      const res = await fetch(GALLERY_SCRIPT_URL);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        ids = data.map(f => f.id);
+        statusEl.textContent = `รูปภาพอัปเดตอัตโนมัติจาก Google Drive (${ids.length} รูป)`;
+      }
+    } catch (e) {
+      statusEl.textContent = 'ใช้รูปภาพที่บันทึกไว้';
+    }
+  }
+
+  idsToUrls(ids);
+  buildHeroSlider();
+  buildGalleryGrid();
+}
+
+// Hero Slider
+function buildHeroSlider() {
+  const slider = document.getElementById('heroSlider');
+  const dots = document.getElementById('heroDots');
+  slider.innerHTML = '';
+  dots.innerHTML = '';
+  const count = Math.min(5, PHOTOS_FULL.length);
+  for (let i = 0; i < count; i++) {
+    const slide = document.createElement('div');
+    slide.className = 'flex-shrink-0 w-full h-full';
+    slide.innerHTML = `<img src="${PHOTOS_FULL[i]}" alt="Villa de Mont" class="w-full h-full object-cover">`;
+    slider.appendChild(slide);
+    const dot = document.createElement('button');
+    dot.className = 'w-2.5 h-2.5 rounded-full transition ' + (i === 0 ? 'bg-white' : 'bg-white/40');
+    dot.onclick = () => goHero(i);
+    dots.appendChild(dot);
+  }
+  let heroIdx = 0;
+  function goHero(i) {
+    heroIdx = i;
+    slider.style.transform = `translateX(-${i * 100}%)`;
+    dots.querySelectorAll('button').forEach((d, j) => d.className = 'w-2.5 h-2.5 rounded-full transition ' + (j === i ? 'bg-white' : 'bg-white/40'));
+  }
+  document.getElementById('heroPrev').onclick = () => goHero((heroIdx - 1 + count) % count);
+  document.getElementById('heroNext').onclick = () => goHero((heroIdx + 1) % count);
+  setInterval(() => goHero((heroIdx + 1) % count), 5000);
+}
+
+// Gallery Grid
+function buildGalleryGrid() {
+  const gal = document.getElementById('gallery');
+  gal.innerHTML = '';
+  PHOTOS.forEach((src, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'group rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/3] bg-bronze-100 border border-bronze-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-bronze-400';
+    btn.innerHTML = `<img src="${src}" alt="Villa de Mont รูปที่ ${i+1}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">`;
+    btn.onclick = () => openLb(i);
+    gal.appendChild(btn);
+  });
+}
 
 // Lightbox
 const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lbImg');
@@ -512,7 +557,9 @@ lb.addEventListener('touchend', (e) => {
   touchX = null;
 }, {passive: true});
 
-// ================= INIT =================
+// =================================================================
+//  INIT
+// =================================================================
 const REFRESH_MS = 3 * 60 * 1000;
 let lastFetch = 0;
 
@@ -536,6 +583,7 @@ async function refreshData(silent) {
 
 render();
 refreshData(false);
+loadGallery();
 setInterval(() => refreshData(true), REFRESH_MS);
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && Date.now() - lastFetch > 60 * 1000) refreshData(true);
