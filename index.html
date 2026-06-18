@@ -391,21 +391,13 @@ async function loadBookings() {
   const text = await res.text();
   const json = JSON.parse(text.substring(text.indexOf('(') + 1, text.lastIndexOf(')')));
   const cols = json.table.cols.map(c => (c.label || '').trim());
-  let tagIdx = cols.findIndex(l => /^tag$/i.test(l));
-  let colorIdx = cols.findIndex(l => /สี|color/i.test(l));
   let ciIdx = cols.findIndex(l => /check\s*in/i.test(l));
   let coIdx = cols.findIndex(l => /check\s*out/i.test(l));
-  if (tagIdx < 0) tagIdx = 0;
-  if (colorIdx < 0) colorIdx = 1;
   if (ciIdx < 0) ciIdx = 2;
   if (coIdx < 0) coIdx = 3;
   const ranges = [];
   for (const row of json.table.rows) {
     const c = row.c || [];
-    const tag = c[tagIdx] && c[tagIdx].v != null ? String(c[tagIdx].v) : '';
-    if (!tag) continue;
-    const color = c[colorIdx] && c[colorIdx].v != null ? String(c[colorIdx].v).toLowerCase() : '';
-    if (color === 'red') continue;
     const ci = parseCell(c[ciIdx] && c[ciIdx].v);
     const co = parseCell(c[coIdx] && c[coIdx].v);
     if (!ci) continue;
