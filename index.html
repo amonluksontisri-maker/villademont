@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Villa de Mont — Pool Villa แก่งคอย สระบุรี | เช็คห้องว่าง</title>
-<meta name="description" content="Villa de Mont พูลวิลล่าส่วนตัว 4 ห้องนอน สระว่ายน้ำส่วนตัว แก่งคอย สระบุรี เริ่มต้น 6,900 บาท/คืน">
+<meta name="description" content="Villa de Mont พูลวิลล่าส่วนตัว 4 ห้องนอน สระว่ายน้ำส่วนตัว แก่งคอย สระบุรี เริ่มต้น 5,900 บาท/คืน">
 <meta property="og:title" content="Villa de Mont — Pool Villa แก่งคอย สระบุรี">
 <meta property="og:description" content="พูลวิลล่าส่วนตัว 4 ห้องนอน สระว่ายน้ำระบบเกลือ วิวภูเขา พักได้ 8-10 ท่าน">
 <meta property="og:type" content="website">
@@ -179,7 +179,7 @@ tailwind.config = {
   <div class="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
     <div class="bg-white rounded-2xl border border-bronze-100 p-6 text-center shadow-sm">
       <div class="text-bronze-500 text-sm mb-2">อาทิตย์ – พฤหัสบดี</div>
-      <div class="serif text-4xl font-bold text-bronze-700">6,900</div>
+      <div class="serif text-4xl font-bold text-bronze-700">5,900</div>
       <div class="text-bronze-500 text-sm">บาท / คืน</div>
     </div>
     <div class="bg-bronze-700 rounded-2xl p-6 text-center shadow-lg relative overflow-hidden">
@@ -459,7 +459,7 @@ function getPriceInfo(dIso) {
   const dow = new Date(y, m-1, d).getDay();
   if (dow === 5 || dow === 6 || getHolidaysForYear(y).has(dIso))
     return {price:'8,900',cls:'text-blue-600',clsB:'text-blue-200'};
-  return {price:'6,900',cls:'text-bronze-700',clsB:'text-bronze-300'};
+  return {price:'5,900',cls:'text-bronze-700',clsB:'text-bronze-300'};
 }
 
 // =================================================================
@@ -512,7 +512,7 @@ function render() {
     cell.className = cls;
     const tag = isPast ? '' : (isBooked ? 'เต็ม' : 'ว่าง');
     const pi = !isPast ? getPriceInfo(dIso) : null;
-    const showPrice = pi && pi.price !== '6,900';
+    const showPrice = pi && pi.price !== '5,900';
     const pc = pi ? (isBooked ? pi.clsB : pi.cls) : '';
     cell.innerHTML = `<div class="font-semibold ${dIso === todayIso ? 'underline underline-offset-2' : ''}">${d}</div>` +
       (showPrice ? `<div class="text-[8px] sm:text-[10px] font-bold leading-tight ${pc}">${pi.price}</div>` : '') +
