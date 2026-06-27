@@ -418,11 +418,14 @@ async function loadBookingsFromGviz() {
   const cols = json.table.cols.map(c => (c.label || '').trim());
   let ciIdx = cols.findIndex(l => /check\s*in/i.test(l));
   let coIdx = cols.findIndex(l => /check\s*out/i.test(l));
+  let tagIdx = cols.findIndex(l => /^tag$/i.test(l));
   if (ciIdx < 0) ciIdx = 2;
   if (coIdx < 0) coIdx = 3;
   const ranges = [];
   for (const row of json.table.rows) {
     const c = row.c || [];
+    const tag = tagIdx >= 0 && c[tagIdx] ? String(c[tagIdx].v || '').trim() : '';
+    if (/^holiday$/i.test(tag)) continue;
     const ci = parseCell(c[ciIdx] && c[ciIdx].v);
     const co = parseCell(c[coIdx] && c[coIdx].v);
     if (!ci) continue;
