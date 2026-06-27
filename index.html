@@ -326,6 +326,11 @@ const SHEET_NAME = 'C_Calendar';
 // ถ้าเว้นว่าง จะใช้รูป fallback ด้านล่างแทน
 const GALLERY_SCRIPT_URL = '';
 
+// ★ วาง URL ของ Google Apps Script สำหรับดึงข้อมูลปฏิทินพร้อมสีเซลล์
+// Script จะอ่านสีพื้นหลังจาก C_Calendar — แถวที่สีดำจะไม่แสดงว่า "เต็ม"
+// ถ้าเว้นว่าง จะใช้ gviz API แบบเดิม (ไม่กรองสี)
+const CALENDAR_SCRIPT_URL = '';
+
 // Fallback image IDs — ใช้เมื่อไม่ได้ตั้งค่า Script URL
 const FALLBACK_IDS = [
   '177poCA9vRpCQDKHsAvZRBWJEb6nFcAao',
@@ -388,7 +393,23 @@ function buildBookedSet(ranges) {
 // =================================================================
 //  BOOKING DATA
 // =================================================================
-async function loadBookings() {
+async function loadBookingsFromScript() {
+  const res = await fetch(CALENDAR_SCRIPT_URL);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  const ranges = [];
+  for (const r of data) {
+    if (r.black) continue;
+    const ci = parseCell(r.ci);
+    const co = parseCell(r.co);
+    if (!ci) continue;
+    ranges.push({ci, co});
+  }
+  if (!ranges.length) throw new Error('no rows');
+  return ranges;
+}
+
+async function loadBookingsFromGviz() {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -409,6 +430,11 @@ async function loadBookings() {
   }
   if (!ranges.length) throw new Error('no rows');
   return ranges;
+}
+
+async function loadBookings() {
+  if (CALENDAR_SCRIPT_URL) return loadBookingsFromScript();
+  return loadBookingsFromGviz();
 }
 function fallbackRanges() {
   return FALLBACK_BOOKINGS.map(s => { const [a,b] = s.split('|'); return {ci: parseCell(a), co: parseCell(b)}; });
