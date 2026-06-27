@@ -666,33 +666,59 @@ lb.addEventListener('touchend', (e) => {
 // =================================================================
 //  INIT
 // =================================================================
-const REFRESH_MS = 3 * 60 * 1000;
+const FETCH_MS = 60 * 1000;
+const RENDER_MS = 5 * 1000;
 let lastFetch = 0;
+let lastRender = 0;
+
+function formatTimestamp(date) {
+  return date.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit', second:'2-digit'}) + ' น.';
+}
+
+function updateAgoText() {
+  if (!lastFetch) return;
+  const status = document.getElementById('data-status');
+  const sec = Math.floor((Date.now() - lastFetch) / 1000);
+  let ago;
+  if (sec < 5) ago = 'เมื่อสักครู่';
+  else if (sec < 60) ago = sec + ' วินาทีที่แล้ว';
+  else ago = Math.floor(sec / 60) + ' นาทีที่แล้ว';
+  status.textContent = '🟢 ข้อมูลสดจากระบบจอง · อัปเดตล่าสุด ' + formatTimestamp(new Date(lastFetch)) + ' (' + ago + ')';
+}
 
 async function refreshData(silent) {
   const status = document.getElementById('data-status');
   try {
+    if (!silent) status.textContent = '🔄 กำลังโหลดข้อมูลล่าสุด…';
     const ranges = await loadBookings();
     booked = buildBookedSet(ranges);
     lastFetch = Date.now();
-    status.textContent = 'ข้อมูลสดจากระบบจอง · อัปเดต ' +
-      new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) + ' น.';
+    updateAgoText();
     render();
   } catch (e) {
     if (!silent) {
       booked = buildBookedSet(fallbackRanges());
-      status.textContent = 'แสดงข้อมูลล่าสุดที่บันทึกไว้ — เช็ควันอีกครั้งทางแชทก่อนโอนมัดจำ';
+      status.textContent = '🟡 แสดงข้อมูลล่าสุดที่บันทึกไว้ — เช็ควันอีกครั้งทางแชทก่อนโอนมัดจำ';
       render();
     }
   }
 }
 
+function autoRender() {
+  const now = Date.now();
+  if (now - lastRender < RENDER_MS) return;
+  lastRender = now;
+  render();
+  updateAgoText();
+}
+
 render();
 refreshData(false);
 loadGallery();
-setInterval(() => refreshData(true), REFRESH_MS);
+setInterval(() => refreshData(true), FETCH_MS);
+setInterval(autoRender, RENDER_MS);
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && Date.now() - lastFetch > 60 * 1000) refreshData(true);
+  if (!document.hidden && Date.now() - lastFetch > 15 * 1000) refreshData(true);
 });
 </script>
 </body>
