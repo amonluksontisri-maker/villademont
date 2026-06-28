@@ -393,22 +393,16 @@ function buildBookedSet(ranges) {
 // =================================================================
 //  BOOKING DATA
 // =================================================================
-let sheetHolidays = new Set();
+let sheetHolidayPrices = {};
 let sheetHolidayYears = new Set();
 
-function extractHolidayDates(holidayRanges) {
-  sheetHolidays = new Set();
+function extractHolidayDates(holidayRows) {
+  sheetHolidayPrices = {};
   sheetHolidayYears = new Set();
-  for (const {ci, co} of holidayRanges) {
-    if (!ci) continue;
-    let end = co || addDays(ci, 1);
-    if (end <= ci) end = addDays(ci, 1);
-    let cur = ci, guard = 0;
-    while (cur < end && guard++ < 60) {
-      sheetHolidays.add(cur);
-      sheetHolidayYears.add(+cur.split('-')[0]);
-      cur = addDays(cur, 1);
-    }
+  for (const {ci, price} of holidayRows) {
+    if (!ci || !price) continue;
+    sheetHolidayPrices[ci] = price;
+    sheetHolidayYears.add(+ci.split('-')[0]);
   }
 }
 
@@ -441,20 +435,27 @@ async function loadBookingsFromGviz() {
   let ciIdx = cols.findIndex(l => /check\s*in/i.test(l));
   let coIdx = cols.findIndex(l => /check\s*out/i.test(l));
   let tagIdx = cols.findIndex(l => /^tag$/i.test(l));
+  let descIdx = cols.findIndex(l => /รายละเอียด|detail|desc/i.test(l));
   if (ciIdx < 0) ciIdx = 2;
   if (coIdx < 0) coIdx = 3;
+  if (descIdx < 0) descIdx = 4;
   const ranges = [];
-  const holidayRanges = [];
+  const holidayRows = [];
   for (const row of json.table.rows) {
     const c = row.c || [];
     const tag = tagIdx >= 0 && c[tagIdx] ? String(c[tagIdx].v || '').trim() : '';
     const ci = parseCell(c[ciIdx] && c[ciIdx].v);
     const co = parseCell(c[coIdx] && c[coIdx].v);
     if (!ci) continue;
-    if (/^holiday$/i.test(tag)) { holidayRanges.push({ci, co}); continue; }
+    if (/^holiday$/i.test(tag)) {
+      const desc = c[descIdx] ? String(c[descIdx].v || '') : '';
+      const pm = desc.match(/\(([0-9,]+)\)/);
+      holidayRows.push({ci, price: pm ? pm[1] : null});
+      continue;
+    }
     ranges.push({ci, co});
   }
-  extractHolidayDates(holidayRanges);
+  extractHolidayDates(holidayRows);
   if (!ranges.length && !holidayRanges.length) throw new Error('no rows');
   return ranges;
 }
@@ -510,13 +511,32 @@ function getHolidaysForYear(year) {
   _holCache[year] = set;
   return set;
 }
+function priceToStyle(price) {
+  if (price.includes('10,900') || price === '9,900') return {cls:'text-red-600',clsB:'text-red-300'};
+  if (price === '8,900') return {cls:'text-blue-600',clsB:'text-blue-200'};
+  if (price === '7,900') return {cls:'text-purple-600',clsB:'text-purple-300'};
+  return {cls:'text-bronze-700',clsB:'text-bronze-300'};
+}
+
 function getPriceInfo(dIso) {
   const [y,m,d] = dIso.split('-').map(Number);
+
+  if (sheetHolidayPrices[dIso]) {
+    const price = sheetHolidayPrices[dIso];
+    return {price, ...priceToStyle(price)};
+  }
+
+  if (sheetHolidayYears.has(y)) {
+    const dow = new Date(y, m-1, d).getDay();
+    if (dow === 6) return {price:'8,900',cls:'text-blue-600',clsB:'text-blue-200'};
+    if (dow === 5) return {price:'7,900',cls:'text-purple-600',clsB:'text-purple-300'};
+    return {price:'6,900',cls:'text-bronze-700',clsB:'text-bronze-300'};
+  }
+
   if ((m === 12 && d >= 29) || (m === 1 && d <= 1) || (m === 4 && d >= 13 && d <= 15))
     return {price:'9,900-10,900',cls:'text-red-600',clsB:'text-red-300'};
   const dow = new Date(y, m-1, d).getDay();
-  const isHoliday = sheetHolidayYears.has(y) ? sheetHolidays.has(dIso) : getHolidaysForYear(y).has(dIso);
-  if (dow === 6 || isHoliday)
+  if (dow === 6 || getHolidaysForYear(y).has(dIso))
     return {price:'8,900',cls:'text-blue-600',clsB:'text-blue-200'};
   if (dow === 5)
     return {price:'7,900',cls:'text-purple-600',clsB:'text-purple-300'};
@@ -573,7 +593,8 @@ function render() {
     cell.className = cls;
     const tag = isPast ? '' : (isBooked ? 'เต็ม' : 'ว่าง');
     const pi = !isPast ? getPriceInfo(dIso) : null;
-    const showPrice = pi && pi.price !== '6,900' && pi.price !== '7,900';
+    const fromSheet = pi && sheetHolidayPrices[dIso];
+    const showPrice = pi && (fromSheet ? pi.price !== '6,900' : (pi.price !== '6,900' && pi.price !== '7,900'));
     const pc = pi ? (isBooked ? pi.clsB : pi.cls) : '';
     cell.innerHTML = `<div class="font-semibold ${dIso === todayIso ? 'underline underline-offset-2' : ''}">${d}</div>` +
       (showPrice ? `<div class="text-[8px] sm:text-[10px] font-bold leading-tight ${pc}">${pi.price}</div>` : '') +
