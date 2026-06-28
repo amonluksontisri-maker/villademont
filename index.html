@@ -393,19 +393,41 @@ function buildBookedSet(ranges) {
 // =================================================================
 //  BOOKING DATA
 // =================================================================
+let sheetHolidays = new Set();
+let sheetHolidayYears = new Set();
+
+function extractHolidayDates(holidayRanges) {
+  sheetHolidays = new Set();
+  sheetHolidayYears = new Set();
+  for (const {ci, co} of holidayRanges) {
+    if (!ci) continue;
+    let end = co || addDays(ci, 1);
+    if (end <= ci) end = addDays(ci, 1);
+    let cur = ci, guard = 0;
+    while (cur < end && guard++ < 60) {
+      sheetHolidays.add(cur);
+      sheetHolidayYears.add(+cur.split('-')[0]);
+      cur = addDays(cur, 1);
+    }
+  }
+}
+
 async function loadBookingsFromScript() {
   const res = await fetch(CALENDAR_SCRIPT_URL);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   const ranges = [];
+  const holidayRanges = [];
   for (const r of data) {
     if (r.black) continue;
     const ci = parseCell(r.ci);
     const co = parseCell(r.co);
     if (!ci) continue;
+    if (r.tag && /^holiday$/i.test(r.tag)) { holidayRanges.push({ci, co}); continue; }
     ranges.push({ci, co});
   }
-  if (!ranges.length) throw new Error('no rows');
+  extractHolidayDates(holidayRanges);
+  if (!ranges.length && !holidayRanges.length) throw new Error('no rows');
   return ranges;
 }
 
@@ -422,16 +444,18 @@ async function loadBookingsFromGviz() {
   if (ciIdx < 0) ciIdx = 2;
   if (coIdx < 0) coIdx = 3;
   const ranges = [];
+  const holidayRanges = [];
   for (const row of json.table.rows) {
     const c = row.c || [];
     const tag = tagIdx >= 0 && c[tagIdx] ? String(c[tagIdx].v || '').trim() : '';
-    if (/^holiday$/i.test(tag)) continue;
     const ci = parseCell(c[ciIdx] && c[ciIdx].v);
     const co = parseCell(c[coIdx] && c[coIdx].v);
     if (!ci) continue;
+    if (/^holiday$/i.test(tag)) { holidayRanges.push({ci, co}); continue; }
     ranges.push({ci, co});
   }
-  if (!ranges.length) throw new Error('no rows');
+  extractHolidayDates(holidayRanges);
+  if (!ranges.length && !holidayRanges.length) throw new Error('no rows');
   return ranges;
 }
 
@@ -491,7 +515,8 @@ function getPriceInfo(dIso) {
   if ((m === 12 && d >= 29) || (m === 1 && d <= 1) || (m === 4 && d >= 13 && d <= 15))
     return {price:'9,900-10,900',cls:'text-red-600',clsB:'text-red-300'};
   const dow = new Date(y, m-1, d).getDay();
-  if (dow === 6 || getHolidaysForYear(y).has(dIso))
+  const isHoliday = sheetHolidayYears.has(y) ? sheetHolidays.has(dIso) : getHolidaysForYear(y).has(dIso);
+  if (dow === 6 || isHoliday)
     return {price:'8,900',cls:'text-blue-600',clsB:'text-blue-200'};
   if (dow === 5)
     return {price:'7,900',cls:'text-purple-600',clsB:'text-purple-300'};
