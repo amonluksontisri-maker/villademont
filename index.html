@@ -593,8 +593,8 @@ function render() {
     cell.className = cls;
     const tag = isPast ? '' : (isBooked ? 'เต็ม' : 'ว่าง');
     const pi = !isPast ? getPriceInfo(dIso) : null;
-    const fromSheet = pi && sheetHolidayPrices[dIso];
-    const showPrice = pi && (fromSheet ? pi.price !== '6,900' : (pi.price !== '6,900' && pi.price !== '7,900'));
+    const fromSheet = !!sheetHolidayPrices[dIso];
+    const showPrice = pi && (fromSheet || (pi.price !== '6,900' && pi.price !== '7,900'));
     const pc = pi ? (isBooked ? pi.clsB : pi.cls) : '';
     cell.innerHTML = `<div class="font-semibold ${dIso === todayIso ? 'underline underline-offset-2' : ''}">${d}</div>` +
       (showPrice ? `<div class="text-[8px] sm:text-[10px] font-bold leading-tight ${pc}">${pi.price}</div>` : '') +
